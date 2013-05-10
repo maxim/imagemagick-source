@@ -10,4 +10,4 @@ supports 'ubuntu'
 
 depends 'build-essential'
 depends 'apt'
-depends 'ohai', '>= 1.1.4'
+# depends 'ohai', '>= 1.1.4'

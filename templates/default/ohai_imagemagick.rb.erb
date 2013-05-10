@@ -1,0 +1,33 @@
+provides 'imagemagick'
+provides 'imagemagick/version'
+provides 'imagemagick/configure_arguments'
+provides 'imagemagick/prefix'
+
+imagemagick Mash.new
+imagemagick[:configure_arguments] ||= []
+
+status, stdout, stderr =
+  run_command(
+    :no_status_check => true,
+    :command => "identify -list configure"
+  )
+
+if status == 0
+  configure_data = stdout
+
+  full_version =
+    configure_data[/^LIB_VERSION_NUMBER\s+(\S+)/, 1].split(',').map{|d| d.to_i}
+
+  version =
+    full_version[0..-2].join('.') + "-#{full_version.last}"
+
+  configure_arguments =
+    configure_data[/^CONFIGURE\s+\.\/configure *(.*)/, 1].scan(/[^'\s]+/).sort
+
+  prefix =
+    configure_data[/^PREFIX\s+(.+)/, 1]
+
+  imagemagick[:version] = version
+  imagemagick[:configure_arguments] = configure_arguments
+  imagemagick[:prefix] = prefix
+end
